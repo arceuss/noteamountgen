@@ -2,7 +2,7 @@
 
 ## how 2 build the jawn
 
-you need cmake and gcc, ninja is optional but recommended
+you need cmake and gcc, ninja is optional but recommended (you also need ffmpeg in your path or next to the exe if you want looped audio)
 
 windows only btw, should probably work on wine? i don't have a linux install anymore so can't test.
 
