@@ -16,6 +16,8 @@ ninja
 
 then the exe should exist at `build/noteamountgen_gui.exe`
 
+<img width="586" height="543" alt="image" src="https://github.com/user-attachments/assets/631459e9-e99e-47de-96e2-4b8dabefba12" />
+
 ---
 
 this uses [sightread](https://github.com/GenericMadScientist/SightRead) by gms to parse charts, modified version is included to remove the boost dependency since we don't need qbmidi support.
