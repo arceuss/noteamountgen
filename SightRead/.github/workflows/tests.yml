@@ -1,0 +1,36 @@
+name: Tests
+
+on: push
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Boost 1.86.0
+        run: |
+          wget -O "$HOME/boost_1_86_0.tar.bz2" https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.bz2
+          tar --bzip2 -xf "$HOME/boost_1_86_0.tar.bz2" -C "$HOME"
+          cd "$HOME/boost_1_86_0"
+          ./bootstrap.sh --with-libraries=locale,test --prefix=.
+          ./b2 toolset=gcc-14 install > /dev/null
+
+      - name: Make build directory
+        run: mkdir build
+
+      - name: Generate build files
+        working-directory: build
+        env:
+          BOOST_ROOT: ~/boost_1_86_0
+          CXX: g++-14
+        run: cmake -DSIGHTREAD_BUILD_TESTS=ON ..
+
+      - name: Build
+        working-directory: build
+        run: cmake --build . --verbose
+
+      - name: Unit tests
+        working-directory: build
+        run: ctest --verbose
