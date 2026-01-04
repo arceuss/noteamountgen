@@ -4,7 +4,7 @@
 
 you need cmake and gcc, ninja is optional but recommended
 
-windows only btw, should probably work on wine? i don't have as linux install anymore so can't test.
+windows only btw, should probably work on wine? i don't have a linux install anymore so can't test.
 
 do uhhhh
 
