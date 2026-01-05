@@ -414,7 +414,7 @@ void update_selected_notes() {
         if (SendMessage(g_sections_list, LB_GETSEL, i, 0) > 0) {
             total += g_state.sections[i].note_count;
             selected++;
-        }
+    }
     }
     
     std::string text = "Selected: " + std::to_string(total) + " notes (" + 
@@ -458,23 +458,23 @@ void update_track_info() {
 bool load_chart(const std::string& path) {
     try {
         std::string content = read_file_content(path);
-        std::string extension = fs::path(path).extension().string();
-        
-        SightRead::Metadata metadata;
-        
-        if (extension == ".chart") {
-            SightRead::ChartParser parser(metadata);
+    std::string extension = fs::path(path).extension().string();
+    
+    SightRead::Metadata metadata;
+    
+    if (extension == ".chart") {
+        SightRead::ChartParser parser(metadata);
             g_state.song = std::make_unique<SightRead::Song>(parser.parse(content));
-        } else if (extension == ".mid" || extension == ".midi") {
-            SightRead::MidiParser parser(metadata);
+    } else if (extension == ".mid" || extension == ".midi") {
+        SightRead::MidiParser parser(metadata);
             g_state.song = std::make_unique<SightRead::Song>(
                 parser.parse(std::vector<std::uint8_t>(content.begin(), content.end()))
             );
-        } else {
+    } else {
             MessageBoxA(g_hwnd, ("Unknown file format: " + extension).c_str(), "Error", MB_OK | MB_ICONERROR);
             return false;
-        }
-        
+}
+
         g_state.chart_path = path;
         g_state.chart_dir = fs::path(path).parent_path().string();
         
@@ -770,8 +770,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         if (ext == ".chart" || ext == ".mid" || ext == ".midi") {
                             load_chart(entry.path().string());
                             break;
-                        }
-                    }
+        }
+    }
                 } else {
                     std::string ext = fs::path(file_path).extension().string();
                     if (ext == ".chart" || ext == ".mid" || ext == ".midi") {
@@ -837,7 +837,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 case ID_OPEN_FOLDER_BTN:
                     if (!g_state.output_folder.empty()) {
                         ShellExecuteA(NULL, "explore", g_state.output_folder.c_str(), NULL, NULL, SW_SHOWDEFAULT);
-                    }
+        }
                     break;
             }
             break;
@@ -850,8 +850,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
     }
-    return 0;
-}
+        return 0;
+    }
 
 // main
 
