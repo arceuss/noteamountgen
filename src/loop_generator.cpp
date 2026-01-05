@@ -163,23 +163,39 @@ GenerationResult LoopGenerator::generate(const GenerationConfig& config) {
             return str;
         };
         
+        // sanitize for folder names - remove chars invalid on windows
+        auto sanitize_for_path = [](std::string str) {
+            std::string result;
+            for (char c : str) {
+                // skip chars that are problematic in file paths
+                if (c == '<' || c == '>' || c == ':' || c == '"' || 
+                    c == '/' || c == '\\' || c == '|' || c == '?' || 
+                    c == '*' || c == '&' || c == '\'' || c == '(' || 
+                    c == ')') {
+                    continue;
+                }
+                result += c;
+            }
+            return result;
+        };
+        
         std::string section_names;
-        std::string section_names_underscore;
+        std::string section_names_sanitized;
         for (size_t i = 0; i < sections_to_loop.size(); ++i) {
             if (i > 0) {
                 section_names += ", ";
-                section_names_underscore += "_";
+                section_names_sanitized += "_";
             }
             section_names += replace_underscores(sections_to_loop[i].name);
-            section_names_underscore += sections_to_loop[i].name;
+            section_names_sanitized += sanitize_for_path(sections_to_loop[i].name);
             if (section_names.length() > 50) {
                 section_names += "...";
-                section_names_underscore += "...";
+                section_names_sanitized += "_etc";  // dont use ... in paths
                 break;
             }
         }
         chart_name = std::to_string(result.total_notes) + " " + section_names + " - " + song_name;
-        folder_name = std::to_string(result.total_notes) + "_" + section_names_underscore;
+        folder_name = std::to_string(result.total_notes) + "_" + section_names_sanitized;
     }
     result.folder_name = folder_name;
     result.chart_name = chart_name;
