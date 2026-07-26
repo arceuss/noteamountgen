@@ -10,6 +10,23 @@ namespace NoteGen {
 const char* LINE_END = "\r\n";
 const char* INDENT = "  ";  // two spaces not tabs
 
+// sightread stores lanes by its own index, which isnt the .chart note type.
+// open notes are type 7 - writing the raw index would emit N 5 (force modifier)
+// and lose the note entirely.
+static int lane_to_note_type(const SightRead::Note& note, int lane) {
+    if (note.flags & SightRead::FLAGS_FIVE_FRET_GUITAR) {
+        // 5 and 6 are the force/tap modifiers, so open lives at 7
+        if (lane == SightRead::FIVE_FRET_OPEN) return 7;
+        return lane <= SightRead::FIVE_FRET_ORANGE ? lane : -1;
+    }
+    if (note.flags & SightRead::FLAGS_SIX_FRET_GUITAR) {
+        if (lane == SightRead::SIX_FRET_OPEN) return 7;
+        if (lane == SightRead::SIX_FRET_BLACK_HIGH) return 8;
+        return lane;
+    }
+    return lane;
+}
+
 void ChartWriter::write(std::ostream& out,
                         const ChartMetadata& metadata,
                         const std::vector<SyncTrackEvent>& sync_events,
@@ -100,8 +117,10 @@ void ChartWriter::write_note_track(std::ostream& out,
         // check each fret
         for (int fret = 0; fret < 7; ++fret) {
             if (note.lengths[fret].value() >= 0) {
+                int note_type = lane_to_note_type(note, fret);
+                if (note_type < 0) continue;
                 std::ostringstream ss;
-                ss << INDENT << note.position.value() << " = N " << fret << " " 
+                ss << INDENT << note.position.value() << " = N " << note_type << " "
                    << note.lengths[fret].value() << LINE_END;
                 events.push_back({note.position.value(), 0, ss.str()});
             }
